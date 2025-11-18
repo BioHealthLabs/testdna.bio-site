@@ -4,645 +4,341 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-NZK9MP0G1J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-NZK9MP0G1J');
-</script>
-
   <title>TestDNA.bio – Independent Guide to DNA Tests (2025)</title>
   <meta name="description"
-        content="Independent guide to DNA tests in 2025. Learn how at-home DNA testing works, what results really mean, and compare leading DNA test companies before you buy." />
+        content="TestDNA.bio is an independent, evidence-based guide to DNA tests. Learn how DNA testing works, what results mean, and compare leading ancestry & health DNA tests via Genectics.com." />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://testdna.bio/" />
 
   <!-- Open Graph -->
   <meta property="og:title" content="TestDNA.bio – Independent DNA Test Guide" />
   <meta property="og:description"
-        content="Understand DNA tests before you buy. TestDNA.bio explains how DNA testing works and sends you to independent comparisons on Genectics.com." />
+        content="Understand DNA testing before you buy a kit. Neutral, evidence-based information with links to detailed comparisons on Genectics.com." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://testdna.bio/" />
-  <meta property="og:image" content="https://genectics.com/og-image-dna-guide.jpg" />
+  <meta property="og:image" content="https://genectics.com/og-image-dna-tests.jpg" />
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TestDNA.bio – Independent DNA Test Guide" />
-  <meta name="twitter:description"
-        content="Learn what DNA tests can and cannot tell you, and compare leading providers before you order a kit." />
-  <meta name="twitter:image" content="https://genectics.com/og-image-dna-guide.jpg" />
-
-  <!-- Simple JSON-LD schema -->
+  <!-- Structured data: WebSite -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "TestDNA.bio",
     "url": "https://testdna.bio/",
-    "description": "Independent guide to at-home DNA tests.",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://genectics.com/?s={search_term_string}",
-      "query-input": "required name=search_term_string"
+    "description": "Independent DNA testing information and comparison guides.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "ronarn",
+      "url": "https://ronarn.com"
     }
   }
   </script>
 
-  <style>
-    :root {
-      --bg: #020617;
-      --bg-elevated: #020617;
-      --border-subtle: #1f2937;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.1);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --danger: #f97373;
-      --success: #4ade80;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #0b1120 0, #020617 45%, #020617 100%);
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .shell {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 20px 16px 40px;
-    }
-
-    header.site-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 10px 0 4px;
-    }
-
-    .brand {
-      font-weight: 600;
-      font-size: 18px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.8);
-    }
-
-    nav a {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-left: 14px;
-      position: relative;
-    }
-
-    nav a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: -3px;
-      width: 0;
-      height: 2px;
-      background: var(--accent);
-      transition: width 0.16s ease-out;
-    }
-
-    nav a:hover {
-      color: var(--text-main);
-    }
-
-    nav a:hover::after {
-      width: 100%;
-    }
-
-    .hero {
-      margin-top: 28px;
-      padding: 24px 20px 26px;
-      border-radius: 20px;
-      border: 1px solid var(--border-subtle);
-      background:
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.06) 0, transparent 55%),
-        radial-gradient(circle at top right, rgba(59, 130, 246, 0.06) 0, transparent 60%),
-        #020617;
-      box-shadow: 0 20px 55px rgba(15, 23, 42, 0.9);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .pill-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent);
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: 26px;
-      line-height: 1.2;
-    }
-
-    .hero-lead {
-      margin: 0 0 16px;
-      font-size: 15px;
-      color: var(--text-muted);
-      max-width: 40rem;
-    }
-
-    .hero-highlights {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-bottom: 18px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .hero-highlights span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      font-size: 11px;
-    }
-
-    .badge-good {
-      background: rgba(34, 197, 94, 0.18);
-      color: var(--success);
-    }
-
-    .badge-risk {
-      background: rgba(239, 68, 68, 0.18);
-      color: var(--danger);
-    }
-
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 10px 18px;
-      cursor: pointer;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: all 0.16s ease-out;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #020617;
-      box-shadow: 0 14px 40px rgba(56, 189, 248, 0.45);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 50px rgba(56, 189, 248, 0.5);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-main);
-      border-color: var(--border-subtle);
-    }
-
-    .btn-ghost:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .hero-note {
-      margin: 0;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    section {
-      margin-top: 32px;
-      padding: 20px 18px 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(15, 23, 42, 0.85);
-      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.8) 0, #020617 55%);
-    }
-
-    section h2 {
-      margin: 0 0 10px;
-      font-size: 18px;
-    }
-
-    section p {
-      margin: 0 0 8px;
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .step {
-      padding: 10px 10px 9px;
-      border-radius: 14px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.8);
-    }
-
-    .step strong {
-      display: block;
-      margin-bottom: 4px;
-      color: var(--text-main);
-      font-size: 13px;
-    }
-
-    .provider-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    .provider {
-      padding: 11px 11px 10px;
-      border-radius: 14px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    .provider-header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 4px;
-    }
-
-    .provider-name {
-      font-weight: 600;
-    }
-
-    .provider-tag {
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-    }
-
-    ul {
-      padding-left: 18px;
-      margin: 6px 0 0;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    ul li + li {
-      margin-top: 3px;
-    }
-
-    .faq-item + .faq-item {
-      margin-top: 8px;
-    }
-
-    .faq-item summary {
-      cursor: pointer;
-      font-size: 14px;
-      color: var(--text-main);
-    }
-
-    .faq-item summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .faq-item summary::before {
-      content: "›";
-      display: inline-block;
-      transform: rotate(90deg);
-      margin-right: 6px;
-      color: var(--accent);
-    }
-
-    .faq-item[open] summary::before {
-      transform: rotate(270deg);
-    }
-
-    .faq-item p {
-      margin-top: 4px;
-    }
-
-    footer {
-      margin-top: 28px;
-      padding: 12px 4px 0;
-      border-top: 1px solid var(--border-subtle);
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    @media (min-width: 720px) {
-      h1 {
-        font-size: 30px;
+  <!-- Structured data: FAQ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How accurate are DNA tests?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Modern DNA tests are generally accurate for relative-matching and broad ancestry regions, but ethnicity percentages and medical insights vary by provider and region. Always treat results as informational, not diagnostic."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What can a DNA test actually tell me?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most DNA tests offer ancestry estimates, regional percentages, genetic relatives and optional health traits depending on the provider. Some include carrier status and selected risk markers where permitted by law."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my DNA data safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Different companies have different data-retention and sharing policies. TestDNA.bio directs you to Genectics.com, which summarises privacy and deletion options for each provider so you can choose confidently."
+        }
       }
-    }
-  </style>
+    ]
+  }
+  </script>
+
+  <!-- Google Analytics 4 – Add your ID if needed -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-NZK9MP0G1J');
+  </script>
+
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="shell">
-    <header class="site-header">
-      <div class="brand">TESTDNA.BIO</div>
-      <nav>
-        <a href="#how-it-works">How tests work</a>
-        <a href="#providers">Top providers</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-    </header>
+<div class="page">
 
-    <main>
-      <section class="hero">
-        <div class="pill">
-          <span class="pill-dot"></span>
-          Independent DNA Test Guide · 2025
-        </div>
-        <h1>Understand DNA tests before you send in your sample</h1>
-        <p class="hero-lead">
-          TestDNA.bio is a simple, independent guide that explains how at-home DNA tests work,
-          what they can and cannot tell you, and where to find unbiased comparisons of the
-          world&#39;s leading DNA test companies.
-        </p>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark">
+        <span class="brand-dot"></span>
+        <span class="brand-text">TestDNA.bio</span>
+      </div>
+      <div class="brand-tagline">
+        Independent, evidence-based information about DNA testing. No sponsorships. No fluff.
+      </div>
+    </div>
 
-        <div class="hero-highlights">
-          <span>
-            <span class="badge badge-good">✓</span>
-            Learn how ancestry &amp; health DNA tests actually work
-          </span>
-          <span>
-            <span class="badge badge-good">✓</span>
-            Compare accuracy, features and pricing across major brands
-          </span>
-          <span>
-            <span class="badge badge-risk">!</span>
-            Understand privacy, data storage and long-term risks
-          </span>
-        </div>
+    <nav class="main-nav" aria-label="Main">
+      <a href="#dna-test-101">Basics</a>
+      <a href="#types">Types of tests</a>
+      <a href="#accuracy">Accuracy</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://genectics.com/dna-tests?ref=testdna.bio-nav"
+         class="nav-cta" target="_blank" rel="noopener">
+        Compare DNA tests
+      </a>
+    </nav>
+  </header>
 
-        <div class="cta-row">
-          <a class="btn btn-primary"
-             href="https://genectics.com/dna-test-guide?ref=testdna.bio">
-            View the independent DNA test comparison
-          </a>
-          <a class="btn btn-ghost"
-             href="https://genectics.com/?ref=testdna.bio">
-            Go to Genectics.com
-          </a>
-        </div>
-
-        <p class="hero-note">
-          All detailed reviews and comparisons are hosted on
-          <a href="https://genectics.com/">Genectics.com</a>, an independent DNA test review site.
-        </p>
-      </section>
-
-      <section id="how-it-works">
-        <h2>How at-home DNA tests work (in plain language)</h2>
-        <p>
-          Most consumer DNA tests follow the same basic steps: you order a kit, send a saliva
-          sample, and receive results online a few weeks later. Behind the scenes, your DNA is
-          extracted, read at thousands of locations, and compared to large reference databases.
-        </p>
-        <div class="steps">
-          <div class="step">
-            <strong>1. Order &amp; activate your kit</strong>
-            You buy a kit online, create an account, and link the activation code printed on the box
-            to your profile.
-          </div>
-          <div class="step">
-            <strong>2. Provide your sample</strong>
-            You spit in a tube (or swab your cheek), seal the sample, and send it back to the
-            company&#39;s lab using the prepaid envelope.
-          </div>
-          <div class="step">
-            <strong>3. Lab processing &amp; results</strong>
-            The lab extracts your DNA, analyses it using genotyping chips or sequencing, and
-            generates ancestry, trait and/or health reports that you can read in your account.
-          </div>
-        </div>
-        <p>
-          Different companies focus on different things: some specialise in ancestry and ethnicity
-          breakdowns, others in health and carrier status, and a few offer combined tests.
-        </p>
-      </section>
-
-      <section id="providers">
-        <h2>Leading DNA test providers compared</h2>
-        <p>
-          Genectics.com reviews and compares the main international DNA test brands. Here is a
-          simplified overview – use it as a starting point, then read the full comparison before
-          you decide.
-        </p>
-        <div class="provider-grid">
-          <article class="provider">
-            <div class="provider-header">
-              <span class="provider-name">LivingDNA</span>
-              <span class="provider-tag">Strong for Europe &amp; UK</span>
-            </div>
-            <p>
-              Detailed regional ancestry breakdowns, especially for the UK and Europe, plus
-              wellbeing insights. Good choice if your roots are mainly European.
-            </p>
-            <ul>
-              <li>Ancestry + wellbeing focus</li>
-              <li>Good coverage for British &amp; Irish heritage</li>
-              <li>Optional add-on health reports</li>
-            </ul>
-          </article>
-
-          <article class="provider">
-            <div class="provider-header">
-              <span class="provider-name">MyHeritage DNA</span>
-              <span class="provider-tag">Great for family matching</span>
-            </div>
-            <p>
-              Large international database and strong tools for discovering relatives and building
-              family trees. Often runs aggressive discounts on DNA kits.
-            </p>
-            <ul>
-              <li>Powerful family-matching tools</li>
-              <li>Integrated online family tree</li>
-              <li>Frequent sales and bundle deals</li>
-            </ul>
-          </article>
-
-          <article class="provider">
-            <div class="provider-header">
-              <span class="provider-name">AncestryDNA</span>
-              <span class="provider-tag">Huge database</span>
-            </div>
-            <p>
-              Very large user database and good historical record integration. Best suited if you
-              want deep ancestry plus access to historical archives.
-            </p>
-            <ul>
-              <li>Massive DNA database</li>
-              <li>Strong record collections (subscription)</li>
-              <li>Primarily ancestry-focused</li>
-            </ul>
-          </article>
-
-          <article class="provider">
-            <div class="provider-header">
-              <span class="provider-name">23andMe</span>
-              <span class="provider-tag">Health + ancestry</span>
-            </div>
-            <p>
-              Combines ancestry with health-related reports (where legally allowed). Popular choice
-              if you want a single kit that covers both.
-            </p>
-            <ul>
-              <li>Ancestry + health insights</li>
-              <li>Traits and wellness reports</li>
-              <li>Limited in some countries due to regulation</li>
-            </ul>
-          </article>
-        </div>
-
-        <p style="margin-top:12px;">
-          For a full side-by-side comparison of these providers, including sample reports and
-          up-to-date pricing, visit the independent guide on
-          <a href="https://genectics.com/dna-test-guide?ref=testdna.bio-providers">Genectics.com</a>.
-        </p>
-      </section>
-
-      <section id="privacy">
-        <h2>DNA tests, privacy and long-term data storage</h2>
-        <p>
-          When you send in a DNA sample, you are not just buying a one-time report — you are
-          deciding what a company can do with your genetic data for years to come. Before you order
-          a kit, always read:
-        </p>
-        <ul>
-          <li>The company&#39;s privacy policy and data retention rules</li>
-          <li>Whether you can delete your raw data and destroy your sample</li>
-          <li>How they handle law-enforcement requests and research partnerships</li>
-        </ul>
-        <p>
-          Genectics.com summarises these points for each provider so you don&#39;t have to read
-          every legal document yourself.
-        </p>
-        <div class="cta-row" style="margin-top:10px;">
-          <a class="btn btn-primary"
-             href="https://genectics.com/dna-test-guide?section=privacy&ref=testdna.bio-privacy">
-            Read the privacy breakdown on Genectics.com
-          </a>
-        </div>
-      </section>
-
-      <section id="faq">
-        <h2>Quick FAQ: DNA tests in 2025</h2>
-        <div class="faq-item">
-          <details>
-            <summary>Are at-home DNA tests accurate?</summary>
-            <p>
-              For ancestry and relative-matching, the main companies are generally reliable —
-              especially for well-represented regions. Health-related results are more nuanced and
-              should never replace medical advice. Treat them as informational, not diagnostic.
-            </p>
-          </details>
-        </div>
-        <div class="faq-item">
-          <details>
-            <summary>Can I stay anonymous when I take a DNA test?</summary>
-            <p>
-              You can sometimes use a nickname on the account, but your DNA itself is unique and can
-              often be linked back to you or your relatives. Read each company&#39;s policy on
-              de-identification and data sharing before you buy.
-            </p>
-          </details>
-        </div>
-        <div class="faq-item">
-          <details>
-            <summary>Which DNA test is “best”?</summary>
-            <p>
-              It depends on your goal: ancestry, relatives, health insights or a mix. That is why
-              we recommend starting with the detailed comparison on
-              <a href="https://genectics.com/dna-test-guide?ref=testdna.bio-faq">
-                Genectics.com
-              </a>
-              rather than trusting a single ad or influencer.
-            </p>
-          </details>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <p>
-        TestDNA.bio is an independent information site that links to third-party DNA test providers
-        via <a href="https://genectics.com/?ref=testdna.bio-footer">Genectics.com</a>.
+  <!-- HERO -->
+  <section class="hero hero-clinical">
+    <div class="hero-main">
+      <p class="hero-kicker">DNA Testing · Evidence-Based Overview</p>
+      <h1 class="hero-title">Understand DNA testing before you buy a kit.</h1>
+      <p class="hero-subtitle">
+        DNA tests can help with ancestry, relative-matching and selected health insights.
+        TestDNA.bio explains what each type of test can realistically tell you and sends you to
+        independent, up-to-date comparisons on Genectics.com.
       </p>
-      <p>© <span id="year"></span> TestDNA.bio</p>
-    </footer>
-  </div>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+      <ul class="hero-list">
+        <li>How DNA testing really works (beyond marketing).</li>
+        <li>Differences between ancestry, health and mixed DNA tests.</li>
+        <li>How to choose the right provider for your goal.</li>
+      </ul>
+
+      <div class="hero-actions">
+        <a href="#dna-test-101" class="btn-primary">
+          Start with DNA Test 101 <span class="chevron">›</span>
+        </a>
+        <a href="https://genectics.com/dna-tests?ref=testdna.bio-hero"
+           class="btn-secondary" target="_blank">
+          Go to Genectics.com comparison
+        </a>
+      </div>
+
+      <p class="hero-note">
+        TestDNA.bio focuses on education only. Detailed brand reviews are hosted on
+        <strong>Genectics.com</strong>.
+      </p>
+    </div>
+
+    <aside class="hero-aside hero-aside-card">
+      <div class="clinic-badge">
+        <span class="clinic-dot"></span>
+        Evidence-based · Neutral · Comparison-supported
+      </div>
+      <div class="clinic-metric">
+        <div class="clinic-label">Most common visitor goal</div>
+        <div class="clinic-value">Find a reliable DNA test for ancestry or relatives</div>
+      </div>
+      <div class="clinic-divider"></div>
+      <ul class="clinic-list">
+        <li>Ancestry-only tests</li>
+        <li>Health-enabled tests</li>
+        <li>Relative-matching & family tools</li>
+      </ul>
+      <p class="clinic-disclaimer">
+        Not medical advice. Genetic health insights require professional interpretation.
+      </p>
+    </aside>
+  </section>
+
+  <!-- MAIN -->
+  <main class="article">
+
+    <!-- DNA TEST 101 -->
+    <section id="dna-test-101" class="card">
+      <h2>DNA Test 101 – What a DNA Test Actually Measures</h2>
+      <p>
+        Consumer DNA tests analyze hundreds of thousands of SNPs (genetic markers) to estimate
+        where your ancestors may have lived and identify relatives who share segments of DNA.
+      </p>
+
+      <p>
+        Most ancestry tests are built on statistical models, large reference datasets, and how
+        your DNA compares to anonymized population samples. These models improve over time but
+        still have limits.
+      </p>
+
+      <div class="grid grid-2">
+        <div class="card-ghost">
+          <h3>What DNA tests can tell you</h3>
+          <ul>
+            <li>Ethnicity estimates based on reference populations</li>
+            <li>Genetic relatives and shared DNA segments</li>
+            <li>Some traits and health markers depending on provider</li>
+            <li>Migration patterns and historical regions</li>
+          </ul>
+        </div>
+        <div class="card-ghost">
+          <h3>What DNA tests cannot guarantee</h3>
+          <ul>
+            <li>Exact percentages or precise locations</li>
+            <li>Definitive medical diagnoses</li>
+            <li>Perfect answers for underrepresented regions</li>
+            <li>Unchanging results (updates happen)</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="inline-note">
+        For brand-by-brand breakdowns, see:
+        <a href="https://genectics.com/dna-tests?ref=testdna.bio-101" target="_blank">
+          Genectics.com – DNA test comparison
+        </a>.
+      </p>
+    </section>
+
+    <!-- TYPES OF TESTS -->
+    <section id="types" class="card">
+      <h2>Types of DNA Tests</h2>
+      <p>
+        Modern at-home DNA tests generally fall into three categories:
+      </p>
+
+      <div class="grid grid-3">
+        <div class="mini-card">
+          <h3>Ancestry Tests</h3>
+          <p>
+            Focus on ethnicity estimates and relative matching. Best for genealogy and family
+            discoveries.
+          </p>
+        </div>
+        <div class="mini-card">
+          <h3>Health DNA Tests</h3>
+          <p>
+            Include selected genetic traits, carrier status, or risk markers depending on
+            regulatory approval in your region.
+          </p>
+        </div>
+        <div class="mini-card">
+          <h3>Combined Tests</h3>
+          <p>
+            Offer both ancestry and health in one kit. Popular for people who want a broader
+            overview in a single purchase.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCURACY -->
+    <section id="accuracy" class="card">
+      <h2>How Accurate Are DNA Tests?</h2>
+      <p>
+        Accuracy depends on reference datasets, statistical models, database size and regional
+        coverage. For well-sampled populations, accuracy is high. For smaller or under-sampled
+        regions, results may be broader or updated over time.
+      </p>
+
+      <p>
+        Relative matching (finding cousins, parents, siblings) is usually the most accurate
+        aspect of DNA testing and works extremely well across providers.
+      </p>
+
+      <p class="inline-note">
+        Genectics.com tracks accuracy differences across major DNA brands:
+        <a href="https://genectics.com/dna-tests?ref=testdna.bio-accuracy" target="_blank">
+          Compare accuracy by provider
+        </a>.
+      </p>
+    </section>
+
+    <!-- PRIVACY -->
+    <section id="privacy" class="card">
+      <h2>DNA Test Privacy & Data Storage</h2>
+      <p>
+        Before taking a DNA test, consider how long companies store your DNA sample, how they
+        handle deletion requests, and whether they partner with research organisations.
+      </p>
+      <p>
+        Privacy policies differ widely. Some companies delete your sample after processing, while
+        others store it for future updates unless you request otherwise.
+      </p>
+
+      <p class="inline-note">
+        See the full privacy overview on:
+        <a href="https://genectics.com/dna-test-guide?section=privacy&ref=testdna.bio-privacy"
+           target="_blank">Genectics.com</a>
+      </p>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="card faq">
+      <h2>Common Questions About DNA Tests</h2>
+
+      <h3>Can DNA tests identify unknown family members?</h3>
+      <p>
+        Yes. DNA databases grow quickly and make it possible to identify close and distant
+        relatives even if they’ve never taken a test themselves.
+      </p>
+
+      <h3>Can DNA results conflict between companies?</h3>
+      <p>
+        Yes, because reference datasets and algorithms differ. Your ethnicity estimate may vary
+        across providers, but close relative matches are typically consistent.
+      </p>
+
+      <h3>How long does processing take?</h3>
+      <p>
+        Usually 3–8 weeks after your sample reaches the lab. Peak seasons may take longer.
+      </p>
+    </section>
+
+    <!-- CTA -->
+    <section class="card cta-clinical">
+      <div class="cta-clinic-text">
+        <h2>Ready to compare actual DNA tests?</h2>
+        <p>
+          TestDNA.bio helps you understand DNA testing before you buy anything. When you're ready
+          to explore real kits, prices and accuracy, use the independent comparison tools at
+          Genectics.com.
+        </p>
+      </div>
+      <div class="cta-clinic-action">
+        <a href="https://genectics.com/dna-tests?ref=testdna.bio-cta"
+           class="btn-primary btn-full" target="_blank">
+          Compare DNA tests at Genectics.com
+          <span class="chevron">›</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <span>© <span id="year"></span> TestDNA.bio — Independent DNA testing education.</span>
+    <span>Operated by ronarn (Norway). Neutral info site linked to Genectics.com.</span>
+    <span>Contact: <a href="mailto:info@testdna.bio">info@testdna.bio</a></span>
+    <span>Business address: Pb. 1010 Lillestrøm Syd, 2012 Lillestrøm, Norway</span>
+    <span>
+      <a href="/privacy.html">Privacy &amp; Cookies</a> ·
+      <a href="https://genectics.com/" target="_blank">Genectics.com</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
