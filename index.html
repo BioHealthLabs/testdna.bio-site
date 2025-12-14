@@ -69,18 +69,147 @@
   }
   </script>
 
-  <!-- Google Analytics 4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NZK9MP0G1J"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-NZK9MP0G1J');
-  </script>
-
   <link rel="stylesheet" href="/styles.css" />
+
+  <!-- Consent overlay styles (Hard mode: block page until choice) -->
+  <style>
+    .consent-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .consent-overlay.is-visible { display: flex; }
+
+    .consent-modal {
+      width: min(720px, 100%);
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      overflow: hidden;
+      border: 1px solid rgba(15, 23, 42, 0.12);
+    }
+
+    .consent-head {
+      padding: 16px 18px;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .consent-title {
+      font-size: 1.0rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    .consent-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(56, 189, 248, 0.18);
+      color: #7dd3fc;
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .consent-body {
+      padding: 16px 18px 14px 18px;
+      color: #0f172a;
+      line-height: 1.55;
+    }
+    .consent-body p { margin: 0 0 10px 0; }
+    .consent-list { margin: 0 0 12px 18px; padding: 0; }
+    .consent-list li { margin: 6px 0; }
+
+    .consent-actions {
+      padding: 14px 18px 18px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-top: 1px solid rgba(15, 23, 42, 0.10);
+      background: #f8fafc;
+    }
+
+    .consent-btn {
+      appearance: none;
+      border: 1px solid rgba(15, 23, 42, 0.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+    }
+    .consent-btn-primary {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: #0f172a;
+    }
+    .consent-btn-secondary {
+      background: #ffffff;
+      color: #0f172a;
+    }
+    .consent-btn-link {
+      background: transparent;
+      border: 0;
+      padding: 10px 6px;
+      font-weight: 600;
+      color: #0f172a;
+      text-decoration: underline;
+    }
+
+    .consent-footnote {
+      font-size: 0.82rem;
+      color: #334155;
+      margin-top: 8px;
+    }
+
+    html.consent-locked, body.consent-locked { overflow: hidden; }
+  </style>
 </head>
 <body>
+
+<!-- Consent overlay (Hard mode) -->
+<div id="consentOverlay" class="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+  <div class="consent-modal">
+    <div class="consent-head">
+      <h2 id="consentTitle" class="consent-title">Privacy & cookies</h2>
+      <span class="consent-badge">TestDNA.bio</span>
+    </div>
+
+    <div class="consent-body">
+      <p>
+        We use analytics to understand which pages and domains get traffic across the ronarn network.
+        We only load Google Analytics (GA4) if you tap <strong>Accept</strong>.
+      </p>
+      <ul class="consent-list">
+        <li><strong>Accept:</strong> enables GA4 analytics on this site.</li>
+        <li><strong>Reject:</strong> no GA4 is loaded.</li>
+      </ul>
+      <p class="consent-footnote">
+        Read details on <a href="/privacy.html">On-site Privacy & Cookies</a>.
+      </p>
+    </div>
+
+    <div class="consent-actions">
+      <button type="button" class="consent-btn consent-btn-primary" id="consentAccept">Accept analytics</button>
+      <button type="button" class="consent-btn consent-btn-secondary" id="consentReject">Reject</button>
+      <button type="button" class="consent-btn consent-btn-link" id="consentOpenPolicy">Read policy</button>
+    </div>
+  </div>
+</div>
+
 <div class="page">
 
   <!-- HEADER -->
@@ -519,10 +648,10 @@
     </section>
 
     <p class="inline-note">
-  If your main question is specifically about paternity testing, visit
-  <a href="https://paternity.bio/" rel="noopener">Paternity.bio</a> for a focused overview
-  of paternity DNA test options.
-</p>
+      If your main question is specifically about paternity testing, visit
+      <a href="https://paternity.bio/" rel="noopener">Paternity.bio</a> for a focused overview
+      of paternity DNA test options.
+    </p>
 
   </main>
 
@@ -536,6 +665,7 @@
     <!-- Local / on-site pages for this domain -->
     <span>
       <a href="/privacy.html">On-site Privacy &amp; Cookies</a> ·
+      <a href="#" id="privacySettingsLink">Privacy settings</a> ·
       <a href="/about.html">About TestDNA.bio</a> ·
       <a href="https://genectics.com/?ref=testdna.bio-footer" target="_blank" rel="noopener">
         Genectics.com – DNA test comparison
@@ -570,6 +700,87 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  (function () {
+    const GA_ID = "G-NZK9MP0G1J";
+    const KEY = "ronarn_consent_analytics";
+
+    const overlay = document.getElementById("consentOverlay");
+    const acceptBtn = document.getElementById("consentAccept");
+    const rejectBtn = document.getElementById("consentReject");
+    const policyBtn = document.getElementById("consentOpenPolicy");
+    const settingsLink = document.getElementById("privacySettingsLink");
+
+    function lockPage() {
+      document.documentElement.classList.add("consent-locked");
+      document.body.classList.add("consent-locked");
+      overlay.classList.add("is-visible");
+    }
+
+    function unlockPage() {
+      overlay.classList.remove("is-visible");
+      document.documentElement.classList.remove("consent-locked");
+      document.body.classList.remove("consent-locked");
+    }
+
+    function setChoice(value) {
+      try { localStorage.setItem(KEY, value); } catch (e) {}
+    }
+
+    function getChoice() {
+      try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+
+    function loadGA4() {
+      if (window.__ga4_loaded) return;
+      window.__ga4_loaded = true;
+
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+      document.head.appendChild(s);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      gtag("js", new Date());
+      gtag("config", GA_ID, {
+        anonymize_ip: true
+      });
+    }
+
+    acceptBtn.addEventListener("click", function () {
+      setChoice("accepted");
+      loadGA4();
+      unlockPage();
+    });
+
+    rejectBtn.addEventListener("click", function () {
+      setChoice("rejected");
+      unlockPage();
+    });
+
+    policyBtn.addEventListener("click", function () {
+      window.location.href = "/privacy.html";
+    });
+
+    if (settingsLink) {
+      settingsLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        lockPage();
+      });
+    }
+
+    const choice = getChoice();
+    if (choice === "accepted") {
+      loadGA4();
+    } else if (choice === "rejected") {
+      // No GA4
+    } else {
+      lockPage(); // Hard mode: force a choice
+    }
+  })();
 </script>
 </body>
 </html>
