@@ -71,716 +71,697 @@
 
   <link rel="stylesheet" href="/styles.css" />
 
-  <!-- Consent overlay styles (Hard mode: block page until choice) -->
+  <!-- ===== Consent (HARD) – same pattern as Genectics.com ===== -->
   <style>
+    body.consent-locked {
+      overflow: hidden !important;
+      touch-action: none !important;
+    }
     .consent-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.72);
-      z-index: 9999;
-      display: none;
+      z-index: 99999;
+      display: none; /* shown via JS */
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
     }
-    .consent-overlay.is-visible { display: flex; }
+    .consent-overlay[aria-hidden="false"] { display: flex; }
 
     .consent-modal {
-      width: min(720px, 100%);
-      background: #ffffff;
+      width: 100%;
+      max-width: 720px;
+      background: #0b1220;
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
       overflow: hidden;
-      border: 1px solid rgba(15, 23, 42, 0.12);
     }
-
-    .consent-head {
-      padding: 16px 18px;
-      background: #0f172a;
-      color: #e2e8f0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
+    .consent-header { padding: 18px 18px 0 18px; }
     .consent-title {
-      font-size: 1.0rem;
-      font-weight: 700;
       margin: 0;
+      font-size: 1.1rem;
       letter-spacing: 0.01em;
     }
-    .consent-badge {
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: rgba(56, 189, 248, 0.18);
-      color: #7dd3fc;
-      padding: 0.25rem 0.55rem;
-      border-radius: 999px;
-      white-space: nowrap;
-    }
-
     .consent-body {
-      padding: 16px 18px 14px 18px;
-      color: #0f172a;
+      padding: 14px 18px 18px 18px;
       line-height: 1.55;
+      color: #cbd5e1;
+      font-size: 0.95rem;
     }
-    .consent-body p { margin: 0 0 10px 0; }
-    .consent-list { margin: 0 0 12px 18px; padding: 0; }
+    .consent-body p { margin: 10px 0; }
+    .consent-list { margin: 12px 0 0 0; padding-left: 18px; }
     .consent-list li { margin: 6px 0; }
 
     .consent-actions {
-      padding: 14px 18px 18px 18px;
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      border-top: 1px solid rgba(15, 23, 42, 0.10);
-      background: #f8fafc;
+      flex-wrap: wrap;
+      padding: 16px 18px 18px 18px;
+      background: rgba(2, 6, 23, 0.5);
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
     }
-
     .consent-btn {
       appearance: none;
-      border: 1px solid rgba(15, 23, 42, 0.18);
-      border-radius: 12px;
-      padding: 10px 12px;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
       font-weight: 700;
       cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      user-select: none;
+      font-size: 0.92rem;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
     }
-    .consent-btn-primary {
-      background: #0ea5e9;
-      border-color: #0ea5e9;
-      color: #0f172a;
+    .consent-accept {
+      background: #38bdf8;
+      color: #0b1220;
     }
-    .consent-btn-secondary {
-      background: #ffffff;
-      color: #0f172a;
-    }
-    .consent-btn-link {
+    .consent-reject {
       background: transparent;
-      border: 0;
-      padding: 10px 6px;
-      font-weight: 600;
-      color: #0f172a;
-      text-decoration: underline;
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.35);
     }
-
-    .consent-footnote {
-      font-size: 0.82rem;
-      color: #334155;
-      margin-top: 8px;
+    .consent-links {
+      margin-left: auto;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: #94a3b8;
     }
-
-    html.consent-locked, body.consent-locked { overflow: hidden; }
+    .consent-links a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    .consent-links a:hover { text-decoration: underline; }
   </style>
+
+  <!-- Consent + GA loader (GA4 loads only AFTER accept) -->
+  <script>
+    (function () {
+      const CONSENT_KEY = "ronarn_consent_analytics_v1";
+      const GA_ID = "G-3GVJ73QQ5J"; // shared GA4 for gene-topic network
+
+      function lockPage() {
+        document.body.classList.add("consent-locked");
+        const overlay = document.getElementById("consent-overlay");
+        if (overlay) overlay.setAttribute("aria-hidden", "false");
+      }
+
+      function unlockPage() {
+        document.body.classList.remove("consent-locked");
+        const overlay = document.getElementById("consent-overlay");
+        if (overlay) overlay.setAttribute("aria-hidden", "true");
+      }
+
+      function loadGA4() {
+        if (window.__gaLoaded) return;
+        window.__gaLoaded = true;
+
+        const s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        gtag("js", new Date());
+        gtag("config", GA_ID, { anonymize_ip: true });
+      }
+
+      function setConsent(value) {
+        localStorage.setItem(CONSENT_KEY, value);
+      }
+
+      function getConsent() {
+        return localStorage.getItem(CONSENT_KEY);
+      }
+
+      function clearConsent() {
+        localStorage.removeItem(CONSENT_KEY);
+      }
+
+      window.__openPrivacySettings = function () {
+        clearConsent();
+        window.location.reload();
+      };
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const saved = getConsent();
+
+        if (saved === "accepted") {
+          loadGA4();
+          unlockPage();
+          return;
+        }
+
+        if (saved === "rejected") {
+          unlockPage();
+          return;
+        }
+
+        lockPage();
+
+        const btnAccept = document.getElementById("consent-accept");
+        const btnReject = document.getElementById("consent-reject");
+
+        btnAccept.addEventListener("click", function () {
+          setConsent("accepted");
+          loadGA4();
+          unlockPage();
+        });
+
+        btnReject.addEventListener("click", function () {
+          setConsent("rejected");
+          unlockPage();
+        });
+      });
+    })();
+  </script>
 </head>
-<body>
 
-<!-- Consent overlay (Hard mode) -->
-<div id="consentOverlay" class="consent-overlay" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
-  <div class="consent-modal">
-    <div class="consent-head">
-      <h2 id="consentTitle" class="consent-title">Privacy & cookies</h2>
-      <span class="consent-badge">TestDNA.bio</span>
-    </div>
+<body class="consent-locked">
 
-    <div class="consent-body">
-      <p>
-        We use analytics to understand which pages and domains get traffic across the ronarn network.
-        We only load Google Analytics (GA4) if you tap <strong>Accept</strong>.
-      </p>
-      <ul class="consent-list">
-        <li><strong>Accept:</strong> enables GA4 analytics on this site.</li>
-        <li><strong>Reject:</strong> no GA4 is loaded.</li>
-      </ul>
-      <p class="consent-footnote">
-        Read details on <a href="/privacy.html">On-site Privacy & Cookies</a>.
-      </p>
-    </div>
-
-    <div class="consent-actions">
-      <button type="button" class="consent-btn consent-btn-primary" id="consentAccept">Accept analytics</button>
-      <button type="button" class="consent-btn consent-btn-secondary" id="consentReject">Reject</button>
-      <button type="button" class="consent-btn consent-btn-link" id="consentOpenPolicy">Read policy</button>
-    </div>
-  </div>
-</div>
-
-<div class="page">
-
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="brand">
-      <div class="brand-mark">
-        <span class="brand-dot"></span>
-        <span class="brand-text">TestDNA.bio</span>
+  <!-- HARD Consent Overlay -->
+  <div id="consent-overlay" class="consent-overlay" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Privacy choices">
+    <div class="consent-modal">
+      <div class="consent-header">
+        <h2 class="consent-title">Privacy choices</h2>
       </div>
-      <div class="brand-tagline">
-        Independent, evidence-based information about DNA testing. No sponsorships. No fluff.
-      </div>
-    </div>
-
-    <nav class="main-nav" aria-label="Main">
-      <a href="#dna-test-101">Basics</a>
-      <a href="#types">Types of tests</a>
-      <a href="#livingdna">LivingDNA</a>
-      <a href="#accuracy">Accuracy</a>
-      <a href="#privacy-section">Privacy</a>
-      <a href="#faq">FAQ</a>
-      <a href="/about.html">About</a>
-      <a href="/privacy.html">Policy</a>
-      <a href="https://genectics.com/?ref=testdna.bio-nav"
-         class="nav-cta" target="_blank" rel="noopener">
-        Compare DNA tests
-      </a>
-    </nav>
-  </header>
-
-  <!-- HERO -->
-  <section class="hero hero-clinical">
-    <div class="hero-main">
-      <p class="hero-kicker">DNA Testing · Evidence-Based Overview</p>
-      <h1 class="hero-title">Understand DNA testing before you buy a kit.</h1>
-      <p class="hero-subtitle">
-        DNA tests can help with ancestry, relative-matching and selected health insights.
-        TestDNA.bio explains what each type of test can realistically tell you – and points you to
-        independent comparisons on <strong>Genectics.com</strong>, plus when a specialist provider
-        like <strong>LivingDNA</strong> is worth a closer look.
-      </p>
-
-      <ul class="hero-list">
-        <li>How DNA testing really works (beyond marketing).</li>
-        <li>Differences between ancestry, health and mixed DNA tests.</li>
-        <li>When to choose a large marketplace kit vs. a specialist like LivingDNA.</li>
-      </ul>
-
-      <div class="hero-actions">
-        <a href="#dna-test-101" class="btn-primary">
-          Start with DNA Test 101 <span class="chevron">›</span>
-        </a>
-        <a href="https://genectics.com/?ref=testdna.bio-hero"
-           class="btn-secondary" target="_blank" rel="noopener">
-          Go to Genectics.com comparison
-        </a>
-      </div>
-
-      <p class="hero-note">
-        TestDNA.bio focuses on education only. Detailed brand reviews are hosted on
-        <strong>Genectics.com</strong> and on specialist provider sites.
-      </p>
-    </div>
-
-    <aside class="hero-aside hero-aside-card">
-      <div class="clinic-badge">
-        <span class="clinic-dot"></span>
-        Evidence-based · Neutral · Comparison-supported
-      </div>
-      <div class="clinic-metric">
-        <div class="clinic-label">Most common visitor goal</div>
-        <div class="clinic-value">Find a reliable DNA test for ancestry or relatives</div>
-      </div>
-      <div class="clinic-divider"></div>
-      <ul class="clinic-list">
-        <li>Ancestry-only tests</li>
-        <li>Health-enabled tests</li>
-        <li>Relative-matching &amp; family tools</li>
-      </ul>
-      <p class="clinic-disclaimer">
-        Not medical advice. Genetic health insights require professional interpretation.
-      </p>
-    </aside>
-  </section>
-
-  <!-- MAIN -->
-  <main class="article">
-
-    <!-- DNA TEST 101 -->
-    <section id="dna-test-101" class="card">
-      <h2>DNA Test 101 – What a DNA Test Actually Measures</h2>
-      <p>
-        Consumer DNA tests analyze hundreds of thousands of SNPs (genetic markers) to estimate
-        where your ancestors may have lived and identify relatives who share segments of DNA.
-      </p>
-
-      <p>
-        Most ancestry tests are built on statistical models, large reference datasets, and how
-        your DNA compares to anonymized population samples. These models improve over time but
-        still have limits.
-      </p>
-
-      <div class="grid grid-2">
-        <div class="card-ghost">
-          <h3>What DNA tests can tell you</h3>
-          <ul>
-            <li>Ethnicity estimates based on reference populations</li>
-            <li>Genetic relatives and shared DNA segments</li>
-            <li>Some traits and health markers depending on provider</li>
-            <li>Migration patterns and historical regions</li>
-          </ul>
-        </div>
-        <div class="card-ghost">
-          <h3>What DNA tests cannot guarantee</h3>
-          <ul>
-            <li>Exact percentages or precise locations</li>
-            <li>Definitive medical diagnoses</li>
-            <li>Perfect answers for underrepresented regions</li>
-            <li>Unchanging results (updates happen)</li>
-          </ul>
-        </div>
-      </div>
-
-      <p class="inline-note">
-        For brand-by-brand breakdowns, see:
-        <a href="https://genectics.com/?ref=testdna.bio-101" target="_blank" rel="noopener">
-          Genectics.com – DNA test comparison
-        </a>.
-      </p>
-    </section>
-
-    <!-- TYPES OF TESTS -->
-    <section id="types" class="card">
-      <h2>Types of DNA Tests</h2>
-      <p>
-        Modern at-home DNA tests generally fall into three categories:
-      </p>
-
-      <div class="grid grid-3">
-        <div class="mini-card">
-          <h3>Ancestry Tests</h3>
-          <p>
-            Focus on ethnicity estimates and relative matching. Best for genealogy and family
-            discoveries.
-          </p>
-        </div>
-        <div class="mini-card">
-          <h3>Health DNA Tests</h3>
-          <p>
-            Include selected genetic traits, carrier status, or risk markers depending on
-            regulatory approval in your region.
-          </p>
-        </div>
-        <div class="mini-card">
-          <h3>Combined Tests</h3>
-          <p>
-            Offer both ancestry and health in one kit. Popular for people who want a broader
-            overview in a single purchase.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- LIVINGDNA SPECIALIST + RECOMMENDED KITS -->
-    <section id="livingdna" class="card">
-      <h2>Where LivingDNA Fits In</h2>
-      <p>
-        Most of the well-known DNA kits are sold through large marketplaces or global brands.
-        <strong>LivingDNA</strong> is a specialist provider that focuses heavily on
-        <strong>fine-grained regional ancestry</strong> – especially for people with
-        British, Irish or UK-linked roots – and increasingly also on wellbeing-focused
-        DNA insights.
-      </p>
-
-      <div class="grid grid-2">
-        <div class="card-ghost">
-          <h3>When LivingDNA is a good fit</h3>
-          <ul>
-            <li>You care a lot about detailed UK &amp; European regional ancestry.</li>
-            <li>You want a more granular breakdown of British or Irish heritage.</li>
-            <li>You’re interested in wellbeing / lifestyle reports as an add-on.</li>
-          </ul>
-        </div>
-        <div class="card-ghost">
-          <h3>When a big marketplace kit is enough</h3>
-          <ul>
-            <li>You mainly want to find relatives and build a large family tree.</li>
-            <li>You want a simple first DNA kit with frequent discounts.</li>
-            <li>You’re okay with broader regions instead of ultra-detailed maps.</li>
-          </ul>
-        </div>
-      </div>
-
-      <p>
-        A common approach is to start with a widely used ancestry kit, then consider LivingDNA
-        as an additional test if you want deeper focus on specific regions – especially within
-        the UK and nearby areas, or if you want combined ancestry + wellbeing in one kit.
-      </p>
-
-      <h3 style="margin-top: 1.5rem;">Recommended LivingDNA kits by country</h3>
-      <p>
-        Below are direct links to LivingDNA kits that tend to convert well in different regions.
-        Choose the country that matches your shipping address and main goal.
-      </p>
-
-      <div class="grid grid-2">
-
-        <!-- United States -->
-        <div class="mini-card">
-          <h4>United States</h4>
-          <p class="small">For US-based customers who want ancestry detail or wellbeing insights.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.jdoqocy.com/click-101587814-14037081"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Ancestry Test – USA</strong>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.tkqlhce.com/click-101587814-13878223"
-                 target="_blank" rel="nofollow sponsored noopener">
-                LivingDNA Wellbeing Test – USA
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- United Kingdom -->
-        <div class="mini-card">
-          <h4>United Kingdom</h4>
-          <p class="small">Best for detailed British &amp; Irish regional ancestry.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.jdoqocy.com/click-101587814-13876558"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Ancestry Test – UK</strong>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.tkqlhce.com/click-101587814-13878193"
-                 target="_blank" rel="nofollow sponsored noopener">
-                LivingDNA Wellbeing Test – UK
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- European Union -->
-        <div class="mini-card">
-          <h4>European Union</h4>
-          <p class="small">For EU customers who want ancestry and optional wellbeing.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.anrdoezrs.net/click-101587814-13878276"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Ancestry Test – EU</strong>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.anrdoezrs.net/click-101587814-13878316"
-                 target="_blank" rel="nofollow sponsored noopener">
-                LivingDNA Wellbeing Test – EU
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Australia -->
-        <div class="mini-card">
-          <h4>Australia</h4>
-          <p class="small">Popular for ancestry detail, with a combined option.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.anrdoezrs.net/click-101587814-13878381"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Ancestry Test – Australia</strong>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.dpbolvw.net/click-101587814-13878386"
-                 target="_blank" rel="nofollow sponsored noopener">
-                LivingDNA Combined Ancestry + Wellbeing – Australia
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- New Zealand -->
-        <div class="mini-card">
-          <h4>New Zealand</h4>
-          <p class="small">Combined kit if you want both ancestry and wellbeing.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.kqzyfj.com/click-101587814-13878399"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Combined Ancestry + Wellbeing – New Zealand</strong>
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <!-- International / Other regions -->
-        <div class="mini-card">
-          <h4>International</h4>
-          <p class="small">For regions outside the main markets listed above.</p>
-          <ul class="link-list">
-            <li>
-              <a href="https://www.tkqlhce.com/click-101587814-13878336"
-                 target="_blank" rel="nofollow sponsored noopener">
-                <strong>LivingDNA Ancestry Test – International</strong>
-              </a>
-            </li>
-            <li>
-              <a href="https://www.tkqlhce.com/click-101587814-13878335"
-                 target="_blank" rel="nofollow sponsored noopener">
-                LivingDNA Combined Ancestry + Wellbeing – International
-              </a>
-            </li>
-          </ul>
-        </div>
-
-      </div>
-
-      <div class="hero-actions" style="margin-top: 1.5rem;">
-        <a href="https://www.anrdoezrs.net/click-101587814-15734443"
-           class="btn-primary"
-           target="_blank"
-           rel="nofollow sponsored noopener">
-          Visit LivingDNA overview
-          <span class="chevron">›</span>
-        </a>
-        <a href="https://genectics.com/?ref=testdna.bio-livingdna-context"
-           class="btn-secondary"
-           target="_blank"
-           rel="noopener">
-          See how LivingDNA compares
-        </a>
-      </div>
-
-      <p class="inline-note">
-        Links to LivingDNA above are affiliate links. If you choose to buy a kit, we may receive
-        a small commission at no extra cost to you. Our educational content on TestDNA.bio and
-        Genectics.com remains neutral and independent.
-      </p>
-    </section>
-
-    <!-- ACCURACY -->
-    <section id="accuracy" class="card">
-      <h2>How Accurate Are DNA Tests?</h2>
-      <p>
-        Accuracy depends on reference datasets, statistical models, database size and regional
-        coverage. For well-sampled populations, accuracy is high. For smaller or under-sampled
-        regions, results may be broader or updated over time.
-      </p>
-
-      <p>
-        Relative matching (finding cousins, parents, siblings) is usually the most accurate
-        aspect of DNA testing and works extremely well across providers.
-      </p>
-
-      <p class="inline-note">
-        Genectics.com tracks accuracy differences across major DNA brands:
-        <a href="https://genectics.com/?ref=testdna.bio-accuracy" target="_blank" rel="noopener">
-          Compare accuracy by provider
-        </a>.
-      </p>
-    </section>
-
-    <!-- PRIVACY -->
-    <section id="privacy-section" class="card">
-      <h2>DNA Test Privacy &amp; Data Storage</h2>
-      <p>
-        Before taking a DNA test, consider how long companies store your DNA sample, how they
-        handle deletion requests, and whether they partner with research organisations.
-      </p>
-      <p>
-        Privacy policies differ widely. Some companies delete your sample after processing, while
-        others store it for future updates unless you request otherwise.
-      </p>
-
-      <p class="inline-note">
-        See the full privacy overview on:
-        <a href="https://genectics.com/?section=privacy&ref=testdna.bio-privacy"
-           target="_blank" rel="noopener">Genectics.com</a>
-      </p>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="card faq">
-      <h2>Common Questions About DNA Tests</h2>
-
-      <h3>Can DNA tests identify unknown family members?</h3>
-      <p>
-        Yes. DNA databases grow quickly and make it possible to identify close and distant
-        relatives even if they’ve never taken a test themselves.
-      </p>
-
-      <h3>Can DNA results conflict between companies?</h3>
-      <p>
-        Yes, because reference datasets and algorithms differ. Your ethnicity estimate may vary
-        across providers, but close relative matches are typically consistent.
-      </p>
-
-      <h3>How long does processing take?</h3>
-      <p>
-        Usually 3–8 weeks after your sample reaches the lab. Peak seasons may take longer.
-      </p>
-
-      <h3>Is LivingDNA “better” than other kits?</h3>
-      <p>
-        It depends on your goal. For deep, UK-focused ancestry mapping, LivingDNA can be one of
-        the strongest options. For huge family trees or US-focused cousin matching, larger
-        databases like AncestryDNA or MyHeritage may still be more practical. Use
-        <a href="https://genectics.com/?ref=testdna.bio-faq-livingdna" target="_blank" rel="noopener">
-          Genectics.com</a> to see how they differ.
-      </p>
-    </section>
-
-    <!-- CTA -->
-    <section class="card cta-clinical">
-      <div class="cta-clinic-text">
-        <h2>Ready to compare actual DNA tests?</h2>
+      <div class="consent-body">
         <p>
-          TestDNA.bio helps you understand DNA testing before you buy anything. When you're ready
-          to explore real kits, prices and accuracy, use the independent comparison tools at
-          Genectics.com – and consider LivingDNA if regional detail is your top priority.
+          TestDNA.bio uses <strong>analytics</strong> to understand which pages are useful and which domains get traffic across the ronarn network.
+        </p>
+        <ul class="consent-list">
+          <li><strong>If you accept:</strong> we load Google Analytics (GA4) to measure visits and basic usage trends.</li>
+          <li><strong>If you reject:</strong> the site still works normally, but we do not load analytics.</li>
+        </ul>
+        <p>
+          Acceptance is only about <strong>analytics</strong>. Links may be affiliate links.
         </p>
       </div>
-      <div class="cta-clinic-action">
-        <a href="https://genectics.com/?ref=testdna.bio-cta"
-           class="btn-primary btn-full" target="_blank" rel="noopener">
-          Compare DNA tests at Genectics.com
-          <span class="chevron">›</span>
-        </a>
+      <div class="consent-actions">
+        <button id="consent-accept" class="consent-btn consent-accept" type="button">Accept analytics</button>
+        <button id="consent-reject" class="consent-btn consent-reject" type="button">Reject</button>
+
+        <div class="consent-links">
+          <span>Learn more:</span>
+          <a href="/privacy.html">Privacy</a>
+          <span>·</span>
+          <a href="https://genectics.com/?ref=testdna.bio-consent" target="_blank" rel="noopener">Genectics.com</a>
+        </div>
       </div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-mark">
+          <span class="brand-dot"></span>
+          <span class="brand-text">TestDNA.bio</span>
+        </div>
+        <div class="brand-tagline">
+          Independent, evidence-based information about DNA testing. No sponsorships. No fluff.
+        </div>
+      </div>
+
+      <nav class="main-nav" aria-label="Main">
+        <a href="#dna-test-101">Basics</a>
+        <a href="#types">Types of tests</a>
+        <a href="#livingdna">LivingDNA</a>
+        <a href="#accuracy">Accuracy</a>
+        <a href="#privacy-section">Privacy</a>
+        <a href="#faq">FAQ</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Policy</a>
+        <a href="https://genectics.com/?ref=testdna.bio-nav"
+           class="nav-cta" target="_blank" rel="noopener">
+          Compare DNA tests
+        </a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero hero-clinical">
+      <div class="hero-main">
+        <p class="hero-kicker">DNA Testing · Evidence-Based Overview</p>
+        <h1 class="hero-title">Understand DNA testing before you buy a kit.</h1>
+        <p class="hero-subtitle">
+          DNA tests can help with ancestry, relative-matching and selected health insights.
+          TestDNA.bio explains what each type of test can realistically tell you – and points you to
+          independent comparisons on <strong>Genectics.com</strong>, plus when a specialist provider
+          like <strong>LivingDNA</strong> is worth a closer look.
+        </p>
+
+        <ul class="hero-list">
+          <li>How DNA testing really works (beyond marketing).</li>
+          <li>Differences between ancestry, health and mixed DNA tests.</li>
+          <li>When to choose a large marketplace kit vs. a specialist like LivingDNA.</li>
+        </ul>
+
+        <div class="hero-actions">
+          <a href="#dna-test-101" class="btn-primary">
+            Start with DNA Test 101 <span class="chevron">›</span>
+          </a>
+          <a href="https://genectics.com/?ref=testdna.bio-hero"
+             class="btn-secondary" target="_blank" rel="noopener">
+            Go to Genectics.com comparison
+          </a>
+        </div>
+
+        <p class="hero-note">
+          TestDNA.bio focuses on education only. Detailed brand reviews are hosted on
+          <strong>Genectics.com</strong> and on specialist provider sites.
+        </p>
+      </div>
+
+      <aside class="hero-aside hero-aside-card">
+        <div class="clinic-badge">
+          <span class="clinic-dot"></span>
+          Evidence-based · Neutral · Comparison-supported
+        </div>
+        <div class="clinic-metric">
+          <div class="clinic-label">Most common visitor goal</div>
+          <div class="clinic-value">Find a reliable DNA test for ancestry or relatives</div>
+        </div>
+        <div class="clinic-divider"></div>
+        <ul class="clinic-list">
+          <li>Ancestry-only tests</li>
+          <li>Health-enabled tests</li>
+          <li>Relative-matching &amp; family tools</li>
+        </ul>
+        <p class="clinic-disclaimer">
+          Not medical advice. Genetic health insights require professional interpretation.
+        </p>
+      </aside>
     </section>
 
-    <p class="inline-note">
-      If your main question is specifically about paternity testing, visit
-      <a href="https://paternity.bio/" rel="noopener">Paternity.bio</a> for a focused overview
-      of paternity DNA test options.
-    </p>
+    <!-- MAIN -->
+    <main class="article">
 
-  </main>
+      <!-- DNA TEST 101 -->
+      <section id="dna-test-101" class="card">
+        <h2>DNA Test 101 – What a DNA Test Actually Measures</h2>
+        <p>
+          Consumer DNA tests analyze hundreds of thousands of SNPs (genetic markers) to estimate
+          where your ancestors may have lived and identify relatives who share segments of DNA.
+        </p>
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <span>© <span id="year"></span> TestDNA.bio — Independent DNA testing education.</span>
-    <span>Operated by ronarn AS (Norway). Neutral info site linked to Genectics.com.</span>
-    <span>Contact: <a href="mailto:info@testdna.bio">info@testdna.bio</a></span>
-    <span>Business address: Pb. 1010 Lillestrøm Syd, 2012 Lillestrøm, Norway</span>
+        <p>
+          Most ancestry tests are built on statistical models, large reference datasets, and how
+          your DNA compares to anonymized population samples. These models improve over time but
+          still have limits.
+        </p>
 
-    <!-- Local / on-site pages for this domain -->
-    <span>
-      <a href="/privacy.html">On-site Privacy &amp; Cookies</a> ·
-      <a href="#" id="privacySettingsLink">Privacy settings</a> ·
-      <a href="/about.html">About TestDNA.bio</a> ·
-      <a href="https://genectics.com/?ref=testdna.bio-footer" target="_blank" rel="noopener">
-        Genectics.com – DNA test comparison
-      </a>
-    </span>
+        <div class="grid grid-2">
+          <div class="card-ghost">
+            <h3>What DNA tests can tell you</h3>
+            <ul>
+              <li>Ethnicity estimates based on reference populations</li>
+              <li>Genetic relatives and shared DNA segments</li>
+              <li>Some traits and health markers depending on provider</li>
+              <li>Migration patterns and historical regions</li>
+            </ul>
+          </div>
+          <div class="card-ghost">
+            <h3>What DNA tests cannot guarantee</h3>
+            <ul>
+              <li>Exact percentages or precise locations</li>
+              <li>Definitive medical diagnoses</li>
+              <li>Perfect answers for underrepresented regions</li>
+              <li>Unchanging results (updates happen)</li>
+            </ul>
+          </div>
+        </div>
 
-    <!-- Global policy network across all your sites -->
-    <span>
-      <a href="https://privacypolicy.bio" target="_blank" rel="noopener">Global Privacy Policy</a> ·
-      <a href="https://terms.bio" target="_blank" rel="noopener">Terms</a> ·
-      <a href="https://disclaimer.bio" target="_blank" rel="noopener">Medical &amp; Affiliate Disclaimer</a> ·
-      <a href="https://disclosure.bio" target="_blank" rel="noopener">Network Affiliate Disclosure</a> ·
-      <a href="https://policies.bio" target="_blank" rel="noopener">Policies</a> ·
-      <a href="https://transparency.bio" target="_blank" rel="noopener">Transparency</a>
-    </span>
+        <p class="inline-note">
+          For brand-by-brand breakdowns, see:
+          <a href="https://genectics.com/?ref=testdna.bio-101" target="_blank" rel="noopener">
+            Genectics.com – DNA test comparison
+          </a>.
+        </p>
+      </section>
 
-    <!-- Governance / ethics layer -->
-    <span>
-      <a href="https://organization.bio" target="_blank" rel="noopener">About the Publisher</a> ·
-      <a href="https://contactus.bio" target="_blank" rel="noopener">Network Contact</a> ·
-      <a href="https://affiliates.bio" target="_blank" rel="noopener">Affiliates</a> ·
-      <a href="https://advertisement.bio" target="_blank" rel="noopener">Advertisements</a> ·
-      <a href="https://guides.bio" target="_blank" rel="noopener">Editorial Guides</a> ·
-      <a href="https://ethics.bio" target="_blank" rel="noopener">Ethics</a> ·
-      <a href="https://standards.bio" target="_blank" rel="noopener">Editorial Standards</a> ·
-      <a href="https://indexing.bio" target="_blank" rel="noopener">Indexing</a> ·
-      <a href="https://verification.bio" target="_blank" rel="noopener">Verification</a>
-    </span>
-  </footer>
+      <!-- TYPES OF TESTS -->
+      <section id="types" class="card">
+        <h2>Types of DNA Tests</h2>
+        <p>
+          Modern at-home DNA tests generally fall into three categories:
+        </p>
 
-</div>
+        <div class="grid grid-3">
+          <div class="mini-card">
+            <h3>Ancestry Tests</h3>
+            <p>
+              Focus on ethnicity estimates and relative matching. Best for genealogy and family
+              discoveries.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Health DNA Tests</h3>
+            <p>
+              Include selected genetic traits, carrier status, or risk markers depending on
+              regulatory approval in your region.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>Combined Tests</h3>
+            <p>
+              Offer both ancestry and health in one kit. Popular for people who want a broader
+              overview in a single purchase.
+            </p>
+          </div>
+        </div>
+      </section>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
+      <!-- LIVINGDNA -->
+      <section id="livingdna" class="card">
+        <h2>Where LivingDNA Fits In</h2>
+        <p>
+          Most of the well-known DNA kits are sold through large marketplaces or global brands.
+          <strong>LivingDNA</strong> is a specialist provider that focuses heavily on
+          <strong>fine-grained regional ancestry</strong> – especially for people with
+          British, Irish or UK-linked roots – and increasingly also on wellbeing-focused
+          DNA insights.
+        </p>
 
-  (function () {
-    const GA_ID = "G-NZK9MP0G1J";
-    const KEY = "ronarn_consent_analytics";
+        <div class="grid grid-2">
+          <div class="card-ghost">
+            <h3>When LivingDNA is a good fit</h3>
+            <ul>
+              <li>You care a lot about detailed UK &amp; European regional ancestry.</li>
+              <li>You want a more granular breakdown of British or Irish heritage.</li>
+              <li>You’re interested in wellbeing / lifestyle reports as an add-on.</li>
+            </ul>
+          </div>
+          <div class="card-ghost">
+            <h3>When a big marketplace kit is enough</h3>
+            <ul>
+              <li>You mainly want to find relatives and build a large family tree.</li>
+              <li>You want a simple first DNA kit with frequent discounts.</li>
+              <li>You’re okay with broader regions instead of ultra-detailed maps.</li>
+            </ul>
+          </div>
+        </div>
 
-    const overlay = document.getElementById("consentOverlay");
-    const acceptBtn = document.getElementById("consentAccept");
-    const rejectBtn = document.getElementById("consentReject");
-    const policyBtn = document.getElementById("consentOpenPolicy");
-    const settingsLink = document.getElementById("privacySettingsLink");
+        <p>
+          A common approach is to start with a widely used ancestry kit, then consider LivingDNA
+          as an additional test if you want deeper focus on specific regions – especially within
+          the UK and nearby areas, or if you want combined ancestry + wellbeing in one kit.
+        </p>
 
-    function lockPage() {
-      document.documentElement.classList.add("consent-locked");
-      document.body.classList.add("consent-locked");
-      overlay.classList.add("is-visible");
-    }
+        <h3 style="margin-top: 1.5rem;">Recommended LivingDNA kits by country</h3>
+        <p>
+          Below are direct links to LivingDNA kits that tend to convert well in different regions.
+          Choose the country that matches your shipping address and main goal.
+        </p>
 
-    function unlockPage() {
-      overlay.classList.remove("is-visible");
-      document.documentElement.classList.remove("consent-locked");
-      document.body.classList.remove("consent-locked");
-    }
+        <div class="grid grid-2">
 
-    function setChoice(value) {
-      try { localStorage.setItem(KEY, value); } catch (e) {}
-    }
+          <div class="mini-card">
+            <h4>United States</h4>
+            <p class="small">For US-based customers who want ancestry detail or wellbeing insights.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.jdoqocy.com/click-101587814-14037081"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Ancestry Test – USA</strong>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.tkqlhce.com/click-101587814-13878223"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  LivingDNA Wellbeing Test – USA
+                </a>
+              </li>
+            </ul>
+          </div>
 
-    function getChoice() {
-      try { return localStorage.getItem(KEY); } catch (e) { return null; }
-    }
+          <div class="mini-card">
+            <h4>United Kingdom</h4>
+            <p class="small">Best for detailed British &amp; Irish regional ancestry.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.jdoqocy.com/click-101587814-13876558"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Ancestry Test – UK</strong>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.tkqlhce.com/click-101587814-13878193"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  LivingDNA Wellbeing Test – UK
+                </a>
+              </li>
+            </ul>
+          </div>
 
-    function loadGA4() {
-      if (window.__ga4_loaded) return;
-      window.__ga4_loaded = true;
+          <div class="mini-card">
+            <h4>European Union</h4>
+            <p class="small">For EU customers who want ancestry and optional wellbeing.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.anrdoezrs.net/click-101587814-13878276"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Ancestry Test – EU</strong>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.anrdoezrs.net/click-101587814-13878316"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  LivingDNA Wellbeing Test – EU
+                </a>
+              </li>
+            </ul>
+          </div>
 
-      const s = document.createElement("script");
-      s.async = true;
-      s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
-      document.head.appendChild(s);
+          <div class="mini-card">
+            <h4>Australia</h4>
+            <p class="small">Popular for ancestry detail, with a combined option.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.anrdoezrs.net/click-101587814-13878381"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Ancestry Test – Australia</strong>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.dpbolvw.net/click-101587814-13878386"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  LivingDNA Combined Ancestry + Wellbeing – Australia
+                </a>
+              </li>
+            </ul>
+          </div>
 
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      window.gtag = gtag;
+          <div class="mini-card">
+            <h4>New Zealand</h4>
+            <p class="small">Combined kit if you want both ancestry and wellbeing.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.kqzyfj.com/click-101587814-13878399"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Combined Ancestry + Wellbeing – New Zealand</strong>
+                </a>
+              </li>
+            </ul>
+          </div>
 
-      gtag("js", new Date());
-      gtag("config", GA_ID, {
-        anonymize_ip: true
-      });
-    }
+          <div class="mini-card">
+            <h4>International</h4>
+            <p class="small">For regions outside the main markets listed above.</p>
+            <ul class="link-list">
+              <li>
+                <a href="https://www.tkqlhce.com/click-101587814-13878336"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  <strong>LivingDNA Ancestry Test – International</strong>
+                </a>
+              </li>
+              <li>
+                <a href="https://www.tkqlhce.com/click-101587814-13878335"
+                   target="_blank" rel="nofollow sponsored noopener">
+                  LivingDNA Combined Ancestry + Wellbeing – International
+                </a>
+              </li>
+            </ul>
+          </div>
 
-    acceptBtn.addEventListener("click", function () {
-      setChoice("accepted");
-      loadGA4();
-      unlockPage();
-    });
+        </div>
 
-    rejectBtn.addEventListener("click", function () {
-      setChoice("rejected");
-      unlockPage();
-    });
+        <div class="hero-actions" style="margin-top: 1.5rem;">
+          <a href="https://www.anrdoezrs.net/click-101587814-15734443"
+             class="btn-primary"
+             target="_blank"
+             rel="nofollow sponsored noopener">
+            Visit LivingDNA overview
+            <span class="chevron">›</span>
+          </a>
+          <a href="https://genectics.com/?ref=testdna.bio-livingdna-context"
+             class="btn-secondary"
+             target="_blank"
+             rel="noopener">
+            See how LivingDNA compares
+          </a>
+        </div>
 
-    policyBtn.addEventListener("click", function () {
-      window.location.href = "/privacy.html";
-    });
+        <p class="inline-note">
+          Links to LivingDNA above are affiliate links. If you choose to buy a kit, we may receive
+          a small commission at no extra cost to you. Our educational content on TestDNA.bio and
+          Genectics.com remains neutral and independent.
+        </p>
+      </section>
 
-    if (settingsLink) {
-      settingsLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        lockPage();
-      });
-    }
+      <!-- ACCURACY -->
+      <section id="accuracy" class="card">
+        <h2>How Accurate Are DNA Tests?</h2>
+        <p>
+          Accuracy depends on reference datasets, statistical models, database size and regional
+          coverage. For well-sampled populations, accuracy is high. For smaller or under-sampled
+          regions, results may be broader or updated over time.
+        </p>
 
-    const choice = getChoice();
-    if (choice === "accepted") {
-      loadGA4();
-    } else if (choice === "rejected") {
-      // No GA4
-    } else {
-      lockPage(); // Hard mode: force a choice
-    }
-  })();
-</script>
+        <p>
+          Relative matching (finding cousins, parents, siblings) is usually the most accurate
+          aspect of DNA testing and works extremely well across providers.
+        </p>
+
+        <p class="inline-note">
+          Genectics.com tracks accuracy differences across major DNA brands:
+          <a href="https://genectics.com/?ref=testdna.bio-accuracy" target="_blank" rel="noopener">
+            Compare accuracy by provider
+          </a>.
+        </p>
+      </section>
+
+      <!-- PRIVACY -->
+      <section id="privacy-section" class="card">
+        <h2>DNA Test Privacy &amp; Data Storage</h2>
+        <p>
+          Before taking a DNA test, consider how long companies store your DNA sample, how they
+          handle deletion requests, and whether they partner with research organisations.
+        </p>
+        <p>
+          Privacy policies differ widely. Some companies delete your sample after processing, while
+          others store it for future updates unless you request otherwise.
+        </p>
+
+        <p class="inline-note">
+          See the full privacy overview on:
+          <a href="https://genectics.com/?section=privacy&ref=testdna.bio-privacy"
+             target="_blank" rel="noopener">Genectics.com</a>
+        </p>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="card faq">
+        <h2>Common Questions About DNA Tests</h2>
+
+        <h3>Can DNA tests identify unknown family members?</h3>
+        <p>
+          Yes. DNA databases grow quickly and make it possible to identify close and distant
+          relatives even if they’ve never taken a test themselves.
+        </p>
+
+        <h3>Can DNA results conflict between companies?</h3>
+        <p>
+          Yes, because reference datasets and algorithms differ. Your ethnicity estimate may vary
+          across providers, but close relative matches are typically consistent.
+        </p>
+
+        <h3>How long does processing take?</h3>
+        <p>
+          Usually 3–8 weeks after your sample reaches the lab. Peak seasons may take longer.
+        </p>
+
+        <h3>Is LivingDNA “better” than other kits?</h3>
+        <p>
+          It depends on your goal. For deep, UK-focused ancestry mapping, LivingDNA can be one of
+          the strongest options. For huge family trees or US-focused cousin matching, larger
+          databases like AncestryDNA or MyHeritage may still be more practical. Use
+          <a href="https://genectics.com/?ref=testdna.bio-faq-livingdna" target="_blank" rel="noopener">
+            Genectics.com</a> to see how they differ.
+        </p>
+      </section>
+
+      <!-- CTA -->
+      <section class="card cta-clinical">
+        <div class="cta-clinic-text">
+          <h2>Ready to compare actual DNA tests?</h2>
+          <p>
+            TestDNA.bio helps you understand DNA testing before you buy anything. When you're ready
+            to explore real kits, prices and accuracy, use the independent comparison tools at
+            Genectics.com – and consider LivingDNA if regional detail is your top priority.
+          </p>
+        </div>
+        <div class="cta-clinic-action">
+          <a href="https://genectics.com/?ref=testdna.bio-cta"
+             class="btn-primary btn-full" target="_blank" rel="noopener">
+            Compare DNA tests at Genectics.com
+            <span class="chevron">›</span>
+          </a>
+        </div>
+      </section>
+
+      <p class="inline-note">
+        If your main question is specifically about paternity testing, visit
+        <a href="https://paternity.bio/" rel="noopener">Paternity.bio</a> for a focused overview
+        of paternity DNA test options.
+      </p>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <span>© <span id="year"></span> TestDNA.bio — Independent DNA testing education.</span>
+      <span>Operated by ronarn AS (Norway). Neutral info site linked to Genectics.com.</span>
+      <span>Contact: <a href="mailto:info@testdna.bio">info@testdna.bio</a></span>
+      <span>Business address: Pb. 1010 Lillestrøm Syd, 2012 Lillestrøm, Norway</span>
+
+      <span>
+        <a href="/privacy.html">On-site Privacy &amp; Cookies</a> ·
+        <a href="#" onclick="window.__openPrivacySettings(); return false;">Privacy settings</a> ·
+        <a href="/about.html">About TestDNA.bio</a> ·
+        <a href="https://genectics.com/?ref=testdna.bio-footer" target="_blank" rel="noopener">
+          Genectics.com – DNA test comparison
+        </a>
+      </span>
+
+      <span>
+        <a href="https://privacypolicy.bio" target="_blank" rel="noopener">Global Privacy Policy</a> ·
+        <a href="https://terms.bio" target="_blank" rel="noopener">Terms</a> ·
+        <a href="https://disclaimer.bio" target="_blank" rel="noopener">Medical &amp; Affiliate Disclaimer</a> ·
+        <a href="https://disclosure.bio" target="_blank" rel="noopener">Network Affiliate Disclosure</a> ·
+        <a href="https://policies.bio" target="_blank" rel="noopener">Policies</a> ·
+        <a href="https://transparency.bio" target="_blank" rel="noopener">Transparency</a>
+      </span>
+
+      <span>
+        <a href="https://organization.bio" target="_blank" rel="noopener">About the Publisher</a> ·
+        <a href="https://contactus.bio" target="_blank" rel="noopener">Network Contact</a> ·
+        <a href="https://affiliates.bio" target="_blank" rel="noopener">Affiliates</a> ·
+        <a href="https://advertisement.bio" target="_blank" rel="noopener">Advertisements</a> ·
+        <a href="https://guides.bio" target="_blank" rel="noopener">Editorial Guides</a> ·
+        <a href="https://ethics.bio" target="_blank" rel="noopener">Ethics</a> ·
+        <a href="https://standards.bio" target="_blank" rel="noopener">Editorial Standards</a> ·
+        <a href="https://indexing.bio" target="_blank" rel="noopener">Indexing</a> ·
+        <a href="https://verification.bio" target="_blank" rel="noopener">Verification</a>
+      </span>
+    </footer>
+
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
