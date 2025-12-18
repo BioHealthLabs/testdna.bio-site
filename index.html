@@ -137,6 +137,12 @@
         gtag("config", GA, { anonymize_ip:true });
       }
 
+      // allow footer/settings links to re-open consent
+      window.__openPrivacySettings = function () {
+        try { localStorage.removeItem(KEY); } catch(e) {}
+        window.location.reload();
+      };
+
       document.addEventListener("DOMContentLoaded", () => {
         const consent = localStorage.getItem(KEY);
         const overlay = document.getElementById("consent-overlay");
@@ -192,7 +198,7 @@
 
 <div class="page">
 
-  <!-- HEADER (MATCHES YOUR DNATEST.BIO TEMPLATE) -->
+  <!-- HEADER (MATCHES DNATEST.BIO TEMPLATE) -->
   <header>
     <div class="brand">
       <div class="brand-name">TestDNA.bio</div>
@@ -311,7 +317,7 @@
       </p>
     </section>
 
-    <!-- CIRCLEDNA (AFFILIATE LINK ADDED) -->
+    <!-- CIRCLEDNA -->
     <section id="circledna" class="card">
       <h2>When CircleDNA Makes Sense</h2>
       <p>
@@ -448,12 +454,12 @@
 
   </main>
 
-  <!-- ✅ YOUR STANDARD NETWORK FOOTER -->
+  <!-- ✅ FOOTER (DNA NETWORK – NO RETINOL TEXT) -->
   <footer class="site-footer">
     <div class="footer-main">
-      <span>© <span id="year"></span> Retinol.bio – Evidence-based retinol education.</span>
-      <span>Operated by ronarn AS, Norway. Independent information site with links to Retynol.com.</span>
-      <span>Contact: <a href="mailto:info@retinol.bio">info@retinol.bio</a></span>
+      <span>© <span id="year"></span> TestDNA.bio – Independent DNA testing education.</span>
+      <span>Operated by ronarn AS, Norway. Independent information site with links to Genectics.com.</span>
+      <span>Contact: <a href="mailto:info@testdna.bio">info@testdna.bio</a></span>
       <span>Business address: Pb. 1010 Lillestrøm Syd, 2012 Lillestrøm, Norway</span>
     </div>
 
@@ -480,7 +486,7 @@
         <a href="https://audits.bio" target="_blank" rel="noopener">Audits</a> ·
         <a href="https://verification.bio" target="_blank" rel="noopener">Verification</a> ·
         <a href="https://indexing.bio" target="_blank" rel="noopener">Indexing</a> ·
-        <a href="https://retynol.com/" target="_blank" rel="noopener">Retynol.com – Product comparison</a>
+        <a href="https://genectics.com/?ref=testdna.bio-footer" target="_blank" rel="noopener">Genectics.com</a>
       </span>
     </nav>
   </footer>
